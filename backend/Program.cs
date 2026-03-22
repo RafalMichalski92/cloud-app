@@ -2,21 +2,27 @@ using CloudBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using CloudBackend.Models;
 
-var builder = WebApplication.CreateBuilder(args); // 1. NAJPIERW tworzymy buildera
+var builder = WebApplication.CreateBuilder(args);
 
-// --- KONFIGURACJA POŁĄCZENIA ---
-// .NET sam priorytetyzuje zmienne środowiskowe z Dockera nad appsettings.json,
-// więc wystarczy jedna czysta linijka:
+// --- 1. KONFIGURACJA POŁĄCZENIA ---
+// Pobieramy connection string (zmiennej środowiskowej z Dockera/Azure lub appsettings.json)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// --- SEKCJA USŁUG (Dependency Injection) ---
+// --- 2. SEKCJA USŁUG (Dependency Injection) ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Rejestracja bazy danych z mechanizmem ponawiania prób (Retry Logic) - KROK Z TWOJEGO ZDJĘCIA
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions => 
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,                          // Ile razy ma próbować
+            maxRetryDelay: TimeSpan.FromSeconds(30),  // Maksymalny odstęp między próbami
+            errorNumbersToAdd: null)                  // Dodatkowe kody błędów (opcjonalnie)
+    ));
 
+// Konfiguracja CORS - żeby Frontend mógł rozmawiać z Backendem
 builder.Services.AddCors(options => {
     options.AddDefaultPolicy(policy => {
         policy.AllowAnyOrigin()
@@ -25,38 +31,41 @@ builder.Services.AddCors(options => {
     });
 });
 
-var app = builder.Build(); // 2. BUDUJEMY aplikację
+var app = builder.Build();
 
-// --- AUTOMATYCZNE TWORZENIE BAZY (Odkoduj to, jeśli chcesz autostart bazy) ---
+// --- 3. AUTOMATYCZNE TWORZENIE BAZY ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
+        // EnsureCreated stworzy tabele, jeśli baza danych już istnieje, ale jest pusta
         context.Database.EnsureCreated();
+        
+        // Seedowanie danych (opcjonalne, na start)
         if (!context.Tasks.Any())
         {
             context.Tasks.AddRange(
                 new CloudTask { Name = "Zrobić kawę", IsCompleted = true },
-                new CloudTask { Name = "Uruchomić projekt w Dockerze", IsCompleted = false }
+                new CloudTask { Name = "Zrobić zadanie z Azure", IsCompleted = false }
             );
             context.SaveChanges();
-            Console.WriteLine("Baza danych zainicjalizowana pomyślnie!");
+            Console.WriteLine("Baza danych gotowa!");
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Błąd bazy danych: {ex.Message}");
+        Console.WriteLine($"Błąd podczas inicjalizacji bazy: {ex.Message}");
     }
 }
 
-// --- MIDDLEWARE ---
+// --- 4. MIDDLEWARE (Kolejność ma znaczenie!) ---
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cloud API V1");
-    c.RoutePrefix = string.Empty; // Swagger będzie dostępny od razu pod localhost:8081
+    c.RoutePrefix = string.Empty; // Swagger na głównym adresie backendu
 });
 
 app.UseCors();
