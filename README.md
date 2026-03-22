@@ -17,5 +17,6 @@ Ten projekt został zaplanowany z myślą o usługach PaaS (Platform as a Servic
 * [x] **Artefakt 3:** Działająca warstwa prenzentacji (React + Vite w Dockerze).
 * [x] **Artefakt 4:** Działająca warstwa logiki backendu (.NET 9 +SQL Connection).
 * [x] **Artefakt 5:** System gotowy na chmurę.
+* [x] **Artefakt 5:** Backend i frontend działają pod publicznym adresem HTTPS.
 
 > **Informacja:** Ten plik będzie ewoluował. W kolejnych etapach dodamy tutaj sekcje 'Quick Start', opis zmiennych środowiskowych oraz instrukcję wdrożenia (CI/CD).
