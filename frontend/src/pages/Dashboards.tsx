@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 
+// Definicja typu dla zadań
 interface CloudTask {
   id: number;
   name: string;
@@ -8,40 +9,97 @@ interface CloudTask {
 }
 
 const Dashboard = () => {
+  // Stan dla listy zadań, błędów oraz nazwy nowego zadania (KROK 1 ze zdjęcia)
   const [items, setItems] = useState<CloudTask[]>([]);
   const [error, setError] = useState("");
+  const [newTaskName, setNewTaskName] = useState(""); 
 
-  useEffect(() => {
+  // 1. Funkcja pobierająca zadania
+  const fetchTasks = () => {
     api.get('/tasks')
       .then((res: any) => {
         setItems(res.data);
+        setError(""); // Czyścimy błąd, jeśli udało się połączyć
       })
       .catch((err: any) => {
         console.error("Szczegóły błędu:", err);
-        setError("Błąd połączenia z API. Sprawdź, czy kontener cloud-backend działa na porcie 8081.");
+        setError("Błąd połączenia z API. Sprawdź, czy backend działa na porcie 8081.");
       });
+  };
+
+  // 2. Pobieranie danych przy starcie
+  useEffect(() => {
+    fetchTasks();
   }, []);
+
+  // 3. Funkcja wysyłająca dane (KROK 2 ze zdjęcia - LOGIC)
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault(); // Zatrzymaj przeładowanie strony
+
+    if (!newTaskName.trim()) return; // Nie wysyłaj pustych
+
+    try {
+      // Wysyłamy TYLKO pole 'name', bo tego wymaga backendowy DTO
+      await api.post('/tasks', {
+        name: newTaskName
+      });
+
+      setNewTaskName(""); // Wyczyść pole po dodaniu
+      fetchTasks();       // Odśwież listę, aby zobaczyć nowe zadanie
+    } catch (err) {
+      console.error("Błąd podczas dodawania:", err);
+      setError("Nie udało się dodać zadania.");
+    }
+  };
 
   return (
     <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
       <h1>☁️ Cloud App Dashboard</h1>
+
+      {/* Komunikat o błędzie */}
       {error && (
         <div style={{ background: '#fff3cd', color: '#856404', padding: '10px', borderRadius: '5px', margin: '20px auto', maxWidth: '400px' }}>
           {error}
         </div>
       )}
+
+      {/* KROK 3 ze zdjęcia - FORMULARZ (PREZENTACJA) */}
+      <form onSubmit={handleAddTask} style={{ marginBottom: '30px' }}>
+        <input 
+          type="text" 
+          placeholder="Wpisz nowe zadanie..." 
+          value={newTaskName}
+          onChange={(e) => setNewTaskName(e.target.value)}
+          style={{ padding: '10px', width: '250px', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+        <button type="submit" style={{ 
+          marginLeft: '10px', 
+          padding: '10px 20px', 
+          backgroundColor: '#007bff', 
+          color: 'white', 
+          border: 'none', 
+          borderRadius: '4px', 
+          cursor: 'pointer' 
+        }}>
+          Dodaj Zadanie
+        </button>
+      </form>
+
+      {/* LISTA ZADAŃ */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {items.length === 0 && !error && <p>Brak zadań w bazie. Dodaj coś przez Swaggera (http://localhost:8081)!</p>}
+        {items.length === 0 && !error && <p>Brak zadań. Czas coś zaplanować!</p>}
+
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {items.map((item) => (
-            <li key={item.id} style={{
-              background: '#f8f9fa',
-              margin: '5px',
-              padding: '10px 20px',
+            <li key={item.id} style={{ 
+              background: '#f8f9fa', 
+              margin: '5px', 
+              padding: '10px 20px', 
               borderRadius: '8px',
-              borderLeft: item.isCompleted ? '5px solid green' : '5px solid gray',
+              borderLeft: item.isCompleted ? '5px solid #28a745' : '5px solid #6c757d',
               width: '350px',
-              textAlign: 'left'
+              textAlign: 'left',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}>
               <strong>{item.name}</strong> {item.isCompleted ? '✅' : '⏳'}
             </li>
@@ -50,6 +108,6 @@ const Dashboard = () => {
       </div>
     </div>
   );
-}; // <--- TUTAJ BRAKOWAŁO TEGO ZAMKNIĘCIA!
+};
 
 export default Dashboard;

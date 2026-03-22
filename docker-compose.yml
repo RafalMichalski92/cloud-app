@@ -17,7 +17,7 @@ services:
     build: ./backend
     container_name: cloud-backend
     ports:
-      - "8081:8080"
+      - "8081:8080" # Mapowanie: Twój system (8081) -> Kontener (8080)
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__DefaultConnection=Server=cloud-db;Database=CloudAppDb;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True
@@ -26,17 +26,24 @@ services:
     depends_on:
       - cloud-db
 
-  # Warstwa Danych (SQL Edge)
+  # Warstwa Danych (SQL Edge) - Scalona wersja
   cloud-db:
     image: mcr.microsoft.com/azure-sql-edge
     container_name: cloud-db
+    restart: always
     environment:
       SA_PASSWORD: "StrongPassword123!"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql # Dane nie znikną po restarcie
     networks:
       - cloud-network
+
+# Definicje globalne
+volumes:
+  sql-data:
 
 networks:
   cloud-network:

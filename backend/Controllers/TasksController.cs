@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CloudBackend.Data;
 using CloudBackend.Models;
+using CloudBackend.DTOs;
+namespace CloudBackend.Controllers; 
 
-namespace CloudBackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -17,25 +18,60 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAll()
+public async Task<ActionResult<IEnumerable<TaskReadDto>>> GetAll()
+{
+    // Pobieramy encje z bazy danych
+    var tasks = await _context.Tasks.ToListAsync();
+    // Mapujemy każdą encję na obiekt DTO
+    var tasksDto = tasks.Select(t => new TaskReadDto
     {
-        return Ok(await _context.Tasks.ToListAsync());
-    }
+        Id = t.Id,
+        Name = t.Name,
+        IsCompleted = t.IsCompleted
+    });
+    return Ok(tasksDto);
+}
 
     [HttpGet("{id}")]
-    public async Task<ActionResult> GetById(int id)
-    {
-        var task = await _context.Tasks.FindAsync(id);
-        return task == null ? NotFound() : Ok(task);
-    }
+public async Task<ActionResult<TaskReadDto>> GetById(int id)
+{
+    var task = await _context.Tasks.FindAsync(id);
+    if (task == null) return NotFound();  // Zwracamy DTO zamiast czystej encji
+    return Ok(new TaskReadDto 
+    { 
+        Id = task.Id, 
+        Name = task.Name, 
+        IsCompleted = task.IsCompleted 
+    });
+}
 
     [HttpPost]
-    public async Task<ActionResult> Create(CloudTask task)
+public async Task<ActionResult<TaskReadDto>> Create(TaskCreateDto taskDto)
+{
+    // 1. Mapowanie DTO -> Entity
+    // Przekształcamy to, co przyszło z sieci, na model bazy danych
+    var newTask = new CloudTask
     {
-        _context.Tasks.Add(task);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
-    }
+        Name = taskDto.Name,
+        IsCompleted = false // Domyślnie nowe zadanie nie jest gotowe
+    };
+
+    // 2. Zapis do bazy danych
+    _context.Tasks.Add(newTask);
+    await _context.SaveChangesAsync();
+
+    // 3. Mapowanie Entity -> DTO (Zwrotka)
+    // Zwracamy TaskReadDto, który zawiera już nadane przez bazę Id
+    var readDto = new TaskReadDto
+    {
+        Id = newTask.Id,
+        Name = newTask.Name,
+        IsCompleted = newTask.IsCompleted
+    };
+
+    return CreatedAtAction(nameof(GetById), new { id = readDto.Id }, readDto);
+}
+ 
 
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(int id, CloudTask task)
