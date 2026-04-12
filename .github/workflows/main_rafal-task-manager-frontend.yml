@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App - cloud-task-manager-frontend
+name: Build and deploy Node.js app to Azure Web App - rafal-task-manager-frontend
 
 on:
   push:
@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,9 +25,9 @@ jobs:
           npm run build
         working-directory: ./frontend
         env:
-          VITE_API_URL: "Tu wstaw adres swojego backendu np. https://cloud-task-manager-api-h9fsfpd4gnaeaddz.germanywestcentral-01.azurewebsites.net/api"
+          VITE_API_URL: "https://rafal-task-manager-api-95831-gpagdmabfth9ggfe.polandcentral-01.azurewebsites.net/api"
 
-      - name: Upload
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -39,7 +40,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Download
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
@@ -52,9 +53,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C5740C2EC450496480A9BF9B9E252450 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D145626EBA80404F9DCC650D70342F1F }}
 
-      - name: Deploy
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'cloud-task-manager-frontend'
+          app-name: 'rafal-task-manager-frontend'
           package: dist
           startup-command: "pm2 serve /home/site/wwwroot --no-daemon --spa"
