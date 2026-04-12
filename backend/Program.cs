@@ -1,8 +1,17 @@
+using Azure.Identity;
 using CloudBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using CloudBackend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --- 0. AZURE KEY VAULT ---
+if (builder.Environment.IsProduction())
+{
+    var vaultName = builder.Configuration["KeyVaultName"];
+    var keyVaultEndpoint = new Uri($"https://{vaultName}.vault.azure.net/");
+    builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+}
 
 // --- 1. KONFIGURACJA POŁĄCZENIA ---
 // Pobieramy connection string (zmiennej środowiskowej z Dockera/Azure lub appsettings.json)
