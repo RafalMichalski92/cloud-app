@@ -1,3 +1,4 @@
 {
-    "appService.defaultWebAppToDeploy": "/subscriptions/0e520782-0cca-4e82-8c75-a9fb1009eb13/resourceGroups/rg-cloud-task-manager/providers/Microsoft.Web/sites/rafal-task-manager-frontend",
+    "appService.defaultWebAppToDeploy": "/subscriptions/0e520782-0cca-4e82-8c75-a9fb1009eb13/resourceGroups/rg-cloud-task-manager/providers/Microsoft.Web/sites/rafal-task-manager-api-95831",
     "appService.deploySubpath": "backend/publish"
+}

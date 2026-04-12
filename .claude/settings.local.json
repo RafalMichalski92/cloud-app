@@ -4,7 +4,9 @@
       "Bash(dotnet add:*)",
       "Bash(dotnet clean:*)",
       "Bash(dotnet build:*)",
-      "Bash(dotnet publish:*)"
+      "Bash(dotnet publish:*)",
+      "Bash(powershell -command \"\\(Get-Item 'D:\\\\Szkoła\\\\cloud-app\\\\backend\\\\publish\\\\Azure.Extensions.AspNetCore.Configuration.Secrets.dll'\\).VersionInfo.FileVersion\")",
+      "Bash(rm:*)"
     ]
   }
 }
