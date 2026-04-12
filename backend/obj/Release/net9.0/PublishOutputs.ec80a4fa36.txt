@@ -1,4 +1,5 @@
 D:\Szkoła\cloud-app\backend\publish\CloudBackend.exe
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\web.config
 D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\web.config
 D:\Szkoła\cloud-app\backend\publish\publish\publish\web.config
 D:\Szkoła\cloud-app\backend\publish\publish\web.config
@@ -19,6 +20,11 @@ D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\appsettings.json
 D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\CloudBackend.deps.json
 D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\CloudBackend.runtimeconfig.json
 D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\CloudBackend.staticwebassets.endpoints.json
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\appsettings.Development.json
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\appsettings.json
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\CloudBackend.deps.json
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\CloudBackend.runtimeconfig.json
+D:\Szkoła\cloud-app\backend\publish\publish\publish\publish\publish\CloudBackend.staticwebassets.endpoints.json
 D:\Szkoła\cloud-app\backend\publish\CloudBackend.dll
 D:\Szkoła\cloud-app\backend\publish\CloudBackend.runtimeconfig.json
 D:\Szkoła\cloud-app\backend\publish\CloudBackend.pdb
@@ -35,7 +41,6 @@ D:\Szkoła\cloud-app\backend\publish\Microsoft.EntityFrameworkCore.Relational.dl
 D:\Szkoła\cloud-app\backend\publish\Microsoft.EntityFrameworkCore.SqlServer.dll
 D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.Caching.Abstractions.dll
 D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.Caching.Memory.dll
-D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.Configuration.dll
 D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.Configuration.Abstractions.dll
 D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.DependencyInjection.dll
 D:\Szkoła\cloud-app\backend\publish\Microsoft.Extensions.DependencyInjection.Abstractions.dll
