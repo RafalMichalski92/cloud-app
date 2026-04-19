@@ -19,6 +19,8 @@ Ten projekt został zaplanowany z myślą o usługach PaaS (Platform as a Servic
 * [x] **Artefakt 5:** System gotowy na chmurę.
 * [x] **Artefakt 6:** Aplikacja wdrożona w Azure.
 * [x] **Artefakt 7:** Magazyn Kluczy działa
-* [x] **Artefakt 8:** Github połączony+ zmiana frontendu(dodanie przycisków: gotowe, usuń oraz cofnij)
+* [x] **Artefakt 8:** Dokumentacja techniczna API (Swagger UI) dostępna publicznie.
+
+## 🚀 Adres aplikacji: rafal-task-manager-frontend-c2ckcmgsaaa4a3bt.polandcentral-01.azurewebsites.net
 
 > **Informacja:** Ten plik będzie ewoluował. W kolejnych etapach dodamy tutaj sekcje 'Quick Start', opis zmiennych środowiskowych oraz instrukcję wdrożenia (CI/CD).
