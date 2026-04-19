@@ -32,6 +32,27 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
+  // ---- NOWA FUNKCJA: Usuwanie zadania ----
+  const handleDelete = async (id: number) => {
+    try {
+      await api.delete(`/tasks/${id}`);
+      setItems(items.filter(item => item.id !== id));
+    } catch (err) {
+      setError("Nie udało się usunąć zadania.");
+    }
+  };
+
+  // ---- NOWA FUNKCJA: Zmiana statusu (Gotowe/W toku) ----
+  const handleToggle = async (item: CloudTask) => {
+    try {
+      const updated = { ...item, isCompleted: !item.isCompleted };
+      await api.put(`/tasks/${item.id}`, updated);
+      setItems(items.map(t => t.id === item.id ? updated : t));
+    } catch (err) {
+      setError("Nie udało się zaktualizować zadania.");
+    }
+  };
+
   // 3. Funkcja wysyłająca dane (KROK 2 ze zdjęcia - LOGIC)
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault(); // Zatrzymaj przeładowanie strony
@@ -101,7 +122,39 @@ const Dashboard = () => {
               textAlign: 'left',
               boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}>
-              <strong>{item.name}</strong> {item.isCompleted ? '✅' : '⏳'}
+              <span style={{ flex: 1 }}>
+                <strong>{item.name}</strong> {item.isCompleted ? '✅' : '⏳'}
+              </span>
+              <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => handleToggle(item)}
+                  style={{
+                    padding: '4px 10px',
+                    backgroundColor: item.isCompleted ? '#6c757d' : '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}
+                >
+                  {item.isCompleted ? 'Cofnij' : 'Gotowe'}
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  style={{
+                    padding: '4px 10px',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}
+                >
+                  Usuń
+                </button>
+              </div>
             </li>
           ))}
         </ul>
